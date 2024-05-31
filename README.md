@@ -1,16 +1,5 @@
-# ecommerce
+# Ecommerce Sneaker App (SneakerCentre)
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Sneaker centre is an ecommerce app that is created using Flutter + Firebase.
+This application mainly focuses on sneaker shopping with a wide range of essential features such as cart, payment methods, promo codes etc.
+(Created as a summer project to know more about Flutter and dart programming)
