@@ -72,147 +72,148 @@ class _SignUpState extends State<SignUp> {
       RegExp(r'^[a-zA-Z0-9. _-]+@[a-zA-Z0-9. -]+\.[a-zA-Z]{2,4}$');
     
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.grey[200],
       body: Center(child: 
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(left: 20, top: 20),
-            child: Text('SneakerCentre',style: TextStyle(color: Colors.deepOrange, fontSize: 35, fontWeight: FontWeight.bold)),
-          ),
-          const SizedBox(height: 10,),
-          const Padding(
-            padding: EdgeInsets.only(left: 20.0),
-            child: Text('Register your account now!',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15),),
-          ),
-          const SizedBox(height: 10,),
-          
-          const Padding(
-            padding: EdgeInsets.only(left: 20.0),
-            child: Text('SIGN UP',style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),),
-          ),
-          const SizedBox(height: 50,),
-          Form(
-            key: formKey,
-            child: Center(child: Column(children: [
-            SizedBox(
-                      width: _width * 0.9,
-                      child: TextFormField(
-                        validator: (value) {
-                          if (emailValidation.hasMatch(value!)) {
-                            return null;
-                          } else {
-                            return 'Invalid email format';
-                          }
-                        },
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.all(15),
-                          hintText: 'Email',
-                          border: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.white),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.deepOrange),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                      ),
-                    ),
-            const SizedBox(height: 30,),
-            SizedBox(
-                      width: _width * 0.9,
-                    
-                      child: TextFormField(
-                        obscureText: hidePassword,
-                        validator: (value) {
-                          if(value.toString().length < 8) return 'Password should contain atleast 8 characters';
-                        },
-                        controller: _passwordController,
-                        
-                        decoration: InputDecoration(
-                          suffixIcon: IconButton(
-                            icon: hidePassword ? const Icon(Icons.visibility_rounded) : const Icon(Icons.visibility_off_rounded),
-                            onPressed: ()=>setState(() {
-                              hidePassword = !hidePassword;
-                            }),
-                          ),
-                          
-                          contentPadding: const EdgeInsets.all(15),
-                          hintText: 'Password',
-                          border: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.white),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.deepOrange),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                      ),
-                    ),
-            const SizedBox(height: 30,),
-            SizedBox(
-                      width: _width * 0.9,
-                    
-                      child: TextFormField(
-                        obscureText: hidePasswordConfirm,
-                        validator: (value) {
-                          if(value.toString().length < 8) return 'Password should contain atleast 8 characters';
-                        },
-                        controller: _confirmPasswordController,
-                        
-                        decoration: InputDecoration(
-                          suffixIcon: IconButton(
-                            icon: hidePasswordConfirm ? const Icon(Icons.visibility_rounded) : const Icon(Icons.visibility_off_rounded),
-                            onPressed: ()=>setState(() {
-                              hidePasswordConfirm = !hidePasswordConfirm;
-                            }),
-                          ),
-                          
-                          contentPadding: const EdgeInsets.all(15),
-                          hintText: 'Password',
-                          border: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.white),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: Colors.deepOrange),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                      ),
-                    ),
-            
-            const SizedBox(height: 20),
-            
-            GestureDetector(
-              onTap: (){
-                if(formKey.currentState!.validate()){
-                  formKey.currentState!.save();
-                  SignUpFirebase();
-                  setState(() {
-                    _emailController.clear();
-                    _passwordController.clear();
-                    _confirmPasswordController.clear();
-                  });
-                }
-              },
-              child: Container(
-                width: _width*0.7,
-                height: 60,
-                decoration: BoxDecoration(color: Colors.deepOrange,borderRadius: BorderRadius.circular(20)),
-                child: const Center(child: Text('Submit',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 20),)),
-              ),
+      SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(left: 20, top: 20),
+              child: Text('SneakerCentre',style: TextStyle(color: Colors.deepOrange, fontSize: 35, fontWeight: FontWeight.bold)),
             ),
-            TextButton(onPressed: widget.function, child: const Text('Login to your account'))
+            const SizedBox(height: 10,),
+            const Padding(
+              padding: EdgeInsets.only(left: 20.0),
+              child: Text('Register your account now!',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15),),
+            ),
+            const SizedBox(height: 10,),
             
-          ],)))
-        ],
+            const Padding(
+              padding: EdgeInsets.only(left: 20.0),
+              child: Text('SIGN UP',style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),),
+            ),
+            const SizedBox(height: 50,),
+            Form(
+              key: formKey,
+              child: Center(child: Column(children: [
+              SizedBox(
+                        width: _width * 0.9,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (emailValidation.hasMatch(value!)) {
+                              return null;
+                            } else {
+                              return 'Invalid email format';
+                            }
+                          },
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.all(15),
+                            hintText: 'Email',
+                            border: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.white),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.deepOrange),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                        ),
+                      ),
+              const SizedBox(height: 30,),
+              SizedBox(
+                        width: _width * 0.9,
+                      
+                        child: TextFormField(
+                          obscureText: hidePassword,
+                          validator: (value) {
+                            if(value.toString().length < 8) return 'Password should contain atleast 8 characters';
+                          },
+                          controller: _passwordController,
+                          
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              icon: hidePassword ? const Icon(Icons.visibility_rounded) : const Icon(Icons.visibility_off_rounded),
+                              onPressed: ()=>setState(() {
+                                hidePassword = !hidePassword;
+                              }),
+                            ),
+                            
+                            contentPadding: const EdgeInsets.all(15),
+                            hintText: 'Password',
+                            border: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.white),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.deepOrange),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                        ),
+                      ),
+              const SizedBox(height: 30,),
+              SizedBox(
+                        width: _width * 0.9,
+                      
+                        child: TextFormField(
+                          obscureText: hidePasswordConfirm,
+                          validator: (value) {
+                            if(value.toString().length < 8) return 'Password should contain atleast 8 characters';
+                          },
+                          controller: _confirmPasswordController,
+                          
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              icon: hidePasswordConfirm ? const Icon(Icons.visibility_rounded) : const Icon(Icons.visibility_off_rounded),
+                              onPressed: ()=>setState(() {
+                                hidePasswordConfirm = !hidePasswordConfirm;
+                              }),
+                            ),
+                            
+                            contentPadding: const EdgeInsets.all(15),
+                            hintText: 'Confirm Password',
+                            border: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.white),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.deepOrange),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                        ),
+                      ),
+              
+              const SizedBox(height: 20),
+              
+              GestureDetector(
+                onTap: (){
+                  if(formKey.currentState!.validate()){
+                    formKey.currentState!.save();
+                    SignUpFirebase();
+                    setState(() {
+                      _emailController.clear();
+                      _passwordController.clear();
+                      _confirmPasswordController.clear();
+                    });
+                  }
+                },
+                child: Container(
+                  width: _width*0.7,
+                  height: 60,
+                  decoration: BoxDecoration(color: Colors.deepOrange,borderRadius: BorderRadius.circular(20)),
+                  child: const Center(child: Text('Submit',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 20),)),
+                ),
+              ),
+              TextButton(onPressed: widget.function, child: const Text('Login to your account'))
+              
+            ],)))
+          ],
+        ),
       ),)
     );
   }

@@ -17,6 +17,7 @@ class _CartState extends State<Cart> {
   double discountedPrice = 0;
   void deleteFromCart(int index) {
     setState(() {
+      discountedPrice -= widget.cart[index]['price'] * 0.5;
       totalPrice -= widget.cart[index]['price'];
       widget.cart.removeAt(index);
     });
@@ -33,6 +34,11 @@ class _CartState extends State<Cart> {
     }
     super.initState();
   }
+  @override
+  void dispose() {
+    promoController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,16 +52,16 @@ class _CartState extends State<Cart> {
               Expanded(
                 child: TextFormField(
                   controller: promoController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     
-                    contentPadding: const EdgeInsets.all(10),
-                    hintText: 'Pincode',
-                    border: const OutlineInputBorder(
+                    contentPadding: EdgeInsets.all(10),
+                    hintText: 'Promo Code',
+                    border: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
                       borderRadius: BorderRadius.only(topLeft: Radius.circular(20),bottomLeft: Radius.circular(20)),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.deepOrange),
+                      borderSide: BorderSide(color: Colors.deepOrange),
                       borderRadius: BorderRadius.only(topLeft: Radius.circular(20),bottomLeft: Radius.circular(20)),
                     ),
                   ),
@@ -98,6 +104,7 @@ class _CartState extends State<Cart> {
                       );
                     });
                   }
+                  promoController.clear();
                 },
                 child: Container(
                   padding: const EdgeInsets.all(10),
@@ -132,6 +139,7 @@ class _CartState extends State<Cart> {
         Container(
           height: 70,
           margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -139,29 +147,45 @@ class _CartState extends State<Cart> {
                 '\$${totalPrice.toString()}',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25,decoration: usedPromo?TextDecoration.lineThrough:null),
               ),
-              (discountedPrice==0)?SizedBox.shrink():Text(
+              (discountedPrice==0)?const SizedBox.shrink():Text(
                 '\$${discountedPrice.toString()}',
                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const AddressPage()));
+                  if(widget.cart.isNotEmpty){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddressPage(cart: widget.cart)));}
+                  else {
+                    showDialog(context: (context), builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Empty Cart'),
+                        content: const Text('You have no items in your cart'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      );
+                    });
+                  }
                 },
                 child: Container(
                   height: 50,
                   width: 100,
+                  decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(10)),
                   child: const Center(
                     child: Text(
                       'Confirm',
                       style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                   ),
-                  decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(10)),
                 ),
               ),
             ],
           ),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
         ),
       ],
     );
@@ -201,8 +225,8 @@ class CartCard extends StatelessWidget {
               Column(
                 children: [
                   Text(name, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                  Text('Size: ' + size.toString()),
-                  Text('Quantity: ' + quantity.toString()),
+                  Text('Size: $size'),
+                  Text('Quantity: $quantity'),
                 ],
               )
             ],

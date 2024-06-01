@@ -1,7 +1,10 @@
 
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ecommerce/components/shoecard.dart';
 import 'package:ecommerce/pages/cart.dart';
+import 'package:ecommerce/pages/delivery.dart';
+import 'package:ecommerce/pages/shopping.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -25,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   @override
   
   Widget build(BuildContext context) {
-    List pages = [SelectionPage(cart: cart,),Cart(cart: cart, promoCode: promocode,)];
+    List pages = [SelectionPage(cart: cart,),Cart(cart: cart, promoCode: promocode,),SearchProduct(cart: cart),DeliveryUpdate()];
     
     return Scaffold(
       drawer: Drawer(
@@ -46,24 +49,30 @@ class _HomePageState extends State<HomePage> {
                 
               ),
               ListTile(
-                onTap: ()=>setState(() {
-                    selectedPage = 1;  
-                    Navigator.pop(context);
-                }),
-                leading: Icon(Icons.shopping_bag,color: Colors.white,),
-                title: Text('Cart',style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),),
-              ),
-              ListTile(
                 onTap: ()=>signOut(),
                 leading: Icon(Icons.exit_to_app_rounded,color: Colors.white,),
                 title: Text('Sign Out',style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),),
+              ),
+              ListTile(
+                onTap: ()=>setState(() {
+                  selectedPage = 3;
+                  Navigator.of(context).pop();
+                }),
+                leading: Icon(Icons.update,color: Colors.white,),
+                title: Text('Delivery Updates',style: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.bold),),
               ),
             ],
           ),
         ),
       ),
       appBar: AppBar(
-        title: const Text('SneakerCenter',style: TextStyle(color: Colors.deepOrange,fontSize: 30,fontWeight: FontWeight.bold),),centerTitle: true,),
+        title: Text('SneakerCentre',style: TextStyle(color: Colors.deepOrange,fontSize: 23,fontWeight: FontWeight.bold),),
+        actions: [
+          IconButton(icon: Icon(Icons.search),onPressed: (){setState(() {
+          selectedPage = 2;
+        });},),IconButton(icon: Icon(Icons.shopping_bag_rounded),onPressed: (){setState(() {
+          selectedPage = 1;
+        });},)],),
       body: pages[selectedPage]);
     
   } 
@@ -76,7 +85,6 @@ class ShoeList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(brand);
     return Expanded(
       child: FutureBuilder<QuerySnapshot>(
         future: FirebaseFirestore.instance
@@ -95,7 +103,7 @@ class ShoeList extends StatelessWidget {
               itemCount: documents?.length ?? 0,
               itemBuilder: (context, index) {
                 DocumentSnapshot document = documents![index];
-                return FoodCard(title: document['title'], price: document['price'], smallDesc: '', imageURL: document['imageURL'],cart: cart,);
+                return ShoeCard(title: document['title'], price: document['price'], imageURL: document['imageURL'],cart: cart,);
               },
             );
           }
@@ -104,147 +112,7 @@ class ShoeList extends StatelessWidget {
     );
   }
 }
-class FoodCard extends StatefulWidget {
-  final String title;
-  final int price;
-  final String smallDesc;
-  final String imageURL;
-  final List cart;
-  const FoodCard({Key? key, required this.title, required this.price, required this.smallDesc, required this.imageURL, required this.cart}) : super(key: key);
 
-  @override
-  State<FoodCard> createState() => _FoodCardState();
-}
-
-class _FoodCardState extends State<FoodCard> {
-  List<bool> isSelected = [false,false,false,false];
-  int numItems = 1;
-  double selectedSize = 0;
-
-  addToCart() {
-    Map<String, dynamic> map = {
-      'imageURL': widget.imageURL,
-      'name': widget.title,
-      'price':widget.price*numItems,
-      'quantity':numItems,
-      'size':selectedSize,
-    };
-    setState(() {
-      widget.cart.add(map);
-    });
-    print(widget.cart);
-  }
-  @override
-  Widget build(BuildContext context) {
-    List<double> sizes = [6,6.5,7,7.5];
-    return Container(
-      margin: const EdgeInsets.only(left: 10,bottom: 20, right: 10),
-      padding: const EdgeInsets.all(10),
-
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.network(
-              widget.imageURL,
-              width: 300,
-              height: 200,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 100,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: ()=>setState(() {
-                        if(numItems>1) numItems--;
-                      }),
-                      child: Container(decoration: const BoxDecoration(color: Colors.black),child: const Icon(Icons.remove,color: Colors.white,),)),
-                    Text(numItems.toString()),
-                    GestureDetector(
-                      onTap: (){
-                        setState(() {
-                          numItems++;
-                        });
-                      },
-                      child: Container(child: const Icon(Icons.add,color: Colors.white,),decoration: const BoxDecoration(color: Colors.black),))
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20,),
-              SizedBox(
-                width: 200,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: sizes.map(
-                  (size) {
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedSize = size;
-                          isSelected[sizes.indexOf(size)] =!isSelected[sizes.indexOf(size)];
-                          for (int i = 0; i < sizes.length; i++) {
-                              isSelected[i] = (i == sizes.indexOf(size));
-                          }
-                          
-                        });
-                      },
-                      child: Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(color: isSelected[sizes.indexOf(size)]?Colors.black:Colors.white,borderRadius: BorderRadius.circular(50),border: Border.all(color: Colors.black)),
-                        child: Text(size.toString(), textAlign: TextAlign.center, style: TextStyle(color: isSelected[sizes.indexOf(size)]?Colors.white:Colors.black),),
-                      ),
-                    );
-                  }
-                ).toList(),),
-              ),
-              const SizedBox(height: 20,),
-              SizedBox(
-                
-                width: 300,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(widget.title, style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 25), ),
-                        Text('\$${widget.price.toString()}'),
-
-                        
-                      ],),
-                      GestureDetector(
-                        onTap: ()=>addToCart(),
-                        child: Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(color: Colors.black,borderRadius: BorderRadius.circular(10)),
-                          child: const Icon(Icons.add, color: Colors.white,)
-                        ),
-                      )
-                      
-                  ],
-                ),
-              ),
-            ],
-          )
-          
-        ],
-      ),
-    );
-  }
-}
 class SelectionPage extends StatefulWidget {
   List<Map<String,dynamic>> cart = [];
   SelectionPage({super.key, required this.cart}); 
